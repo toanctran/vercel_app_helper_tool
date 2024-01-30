@@ -26,6 +26,32 @@ def word_count(text: str):
         "Number of words in Longest sentence": words_in_longest_sentence
     }
 
-@app.post("/word-count/")
+
+class SpeakingData(BaseModel):
+    speaking_rate: int
+    text_length: int
+
+def calculate_speaking_time(speaking_rate: int, text_length: int):
+    """
+    Use to calculate speaking time in second based on the speaking rate in WPM and the length of text
+    """
+    speaking_time =  (text_length / speaking_rate) * 60
+    return {
+        "Speaking time" : round(speaking_time)
+    }
+
+@app.post("/words_count/")
 def analyze_text_endpoint(text_data: TextData):
+    """
+    Endpoint use to count the words in provided text.
+    """
     return word_count(text_data.text)
+
+@app.post("/get_speaking_time_in_seconds/")
+def analyze_speaking_time(request_data: SpeakingData):
+    """
+    Endpoint use to calculate the speaking time in second using the speaking rate in WPM and the total word numbers of the text.
+    """
+    return calculate_speaking_time(request_data.speaking_rate, request_data.text_length)
+
+
