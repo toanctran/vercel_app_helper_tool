@@ -5,6 +5,10 @@ import re
 
 app = FastAPI()
 
+@app.get("/")
+async def root():
+  return{"message":"Created by Tran Chi Toan - chitoantran@gmail.com"}
+
 class TextData(BaseModel):
     text: str
 
