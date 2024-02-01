@@ -10,6 +10,7 @@ from langchain.chat_models import ChatOpenAI
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.prompts import PromptTemplate
 from pydantic import Field
+import os
 
 app = FastAPI()
 
