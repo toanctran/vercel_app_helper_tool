@@ -59,27 +59,9 @@ def analyze_speaking_time(request_data: SpeakingData):
     """
     return calculate_speaking_time(request_data.speaking_rate, request_data.text_length)
 
-class GoogleSearchData(BaseModel):
-    query: str
-    num_results: int
-    lang: str
-
-@app.post("/get_google_search")
-def get_google_search(request_data: GoogleSearchData):
-    """
-    Endpoint to perform Google searches and retrieving search results.
-    """
-     # Perform the Google search
-    search_results = search(request_data.query, num_results=request_data.num_results, lang=request_data.lang, advanced=True)
-    return {
-        "search_results" : search_results
-    }
-
 
 class ScrapeRequestData(BaseModel):
     url: str
-
-
 
 def get_website_content(url):
     
@@ -111,9 +93,7 @@ def get_google_search(request_data: GoogleSearchData):
     """
      # Perform the Google search
     search_results = search(request_data.query, num_results=request_data.num_results, lang=request_data.lang, advanced=True)
-    content_results = []
     for result in search_results:
-        url = result.get('url')
-        content = get_website_content(url)
-        content_results .append(content)
-    return content_results
+        content = get_website_content(result['url'])['content']
+        result['content'] =content
+    return {"search_results": search_results}
