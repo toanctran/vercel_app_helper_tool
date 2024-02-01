@@ -93,7 +93,7 @@ def get_google_search(request_data: GoogleSearchData):
     """
      # Perform the Google search
     search_results = search(request_data.query, num_results=request_data.num_results, lang=request_data.lang, advanced=True)
-    for result in search_results:
-        content = get_website_content(result['url'])['content']
-        result['content'] = content
+    # for result in search_results:
+    #     content = get_website_content(result['url'])['content']
+    #     result['content'] = content
     return {"search_results": search_results}
