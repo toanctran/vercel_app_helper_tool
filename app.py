@@ -97,42 +97,59 @@ def get_website_content(request_data: ScrapeRequestData):
     else:
         return {"error":  str(f"Failed to fetch the URL {request_data.url}")}
     
-class SummaryRequestData(BaseModel):
-    content: str = Field(
-      ..., description="Content to summarize"
-  )
+# class SummaryRequestData(BaseModel):
+#     content: str = Field(
+#       ..., description="Content to summarize"
+#   )
     
-@app.post("/summarize_content")
-def get_summary(request_data: SummaryRequestData):
+# @app.post("/summarize_content")
+# def get_summary(request_data: SummaryRequestData):
+#     """
+#     Endpoint to summarize give content
+#     """
+#     try:
+#         llm = ChatOpenAI(temperature=0, model="gpt-3.5-turbo-1106", openai_api_key = os.environ["OPENAI_API_KEY"])
+#         text_splitter = RecursiveCharacterTextSplitter(
+#             separators=["\n\n", "\n"], chunk_size=10000, chunk_overlap=500)
+#         docs = text_splitter.create_documents([request_data.content])
+#         map_prompt = """
+#         Write a detailed summary of the following text for a research purpose:
+#         "{text}"
+#         SUMMARY:
+#         """
+#         map_prompt_template = PromptTemplate(
+#             template=map_prompt, input_variables=["text"])
+
+#         summary_chain = load_summarize_chain(
+#             llm=llm,
+#             chain_type='map_reduce',
+#             map_prompt=map_prompt_template,
+#             combine_prompt=map_prompt_template,
+#             verbose=True
+#         )
+
+#         output = summary_chain.run(input_documents=docs,)
+
+#         return {"summary_text":output}
+#     except Exception as e:
+#         return {"error": str(e)}
+
+
+
+class GoogleSearchData(BaseModel):
+    query: str
+    num_results: int
+    lang: str
+
+@app.post("/get_google_search")
+def get_google_search(request_data: GoogleSearchData):
     """
-    Endpoint to summarize give content
+    Endpoint to perform Google searches and retrieving search results.
     """
-    try:
-        llm = ChatOpenAI(temperature=0, model="gpt-3.5-turbo-1106", openai_api_key = os.environ["OPENAI_API_KEY"])
-        text_splitter = RecursiveCharacterTextSplitter(
-            separators=["\n\n", "\n"], chunk_size=10000, chunk_overlap=500)
-        docs = text_splitter.create_documents([request_data.content])
-        map_prompt = """
-        Write a detailed summary of the following text for a research purpose:
-        "{text}"
-        SUMMARY:
-        """
-        map_prompt_template = PromptTemplate(
-            template=map_prompt, input_variables=["text"])
-
-        summary_chain = load_summarize_chain(
-            llm=llm,
-            chain_type='map_reduce',
-            map_prompt=map_prompt_template,
-            combine_prompt=map_prompt_template,
-            verbose=True
-        )
-
-        output = summary_chain.run(input_documents=docs,)
-
-        return {"summary_text":output}
-    except Exception as e:
-        return {"error": str(e)}
-
-
-
+     # Perform the Google search
+    search_results = search(request_data.query, num_results=request_data.num_results, lang=request_data.lang, advanced=True)
+    for result in search_results:
+        result['content'] = get_website_content(result['url'])
+    return {
+        "search_results" : search_results
+    }
