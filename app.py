@@ -64,8 +64,10 @@ def get_google_search(request_data: GoogleSearchData):
     Endpoint to perform Google searches and retrieving search results.
     """
      # Perform the Google search
-    search_results = search(request_data.query, num_results=request_data.num_results, lang="en")
-    return list(search_results)
+    search_results = search(request_data.query, num_results=request_data.num_results, lang="en", advanced=True)
+    return {
+        "search_results" : search_results
+    }
 
 
 
