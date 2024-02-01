@@ -113,6 +113,7 @@ def get_google_search(request_data: GoogleSearchData):
     search_results = search(request_data.query, num_results=request_data.num_results, lang=request_data.lang, advanced=True)
     content_results = []
     for result in search_results:
-        content = get_website_content(result['url'])
+        url = result.get('url')
+        content = get_website_content(url)
         content_results .append(content)
     return content_results
