@@ -57,6 +57,7 @@ def analyze_speaking_time(request_data: SpeakingData):
 class GoogleSearchData(BaseModel):
     query: str
     num_results: int
+    lang: str
 
 @app.post("/get_google_search")
 def get_google_search(request_data: GoogleSearchData):
@@ -64,7 +65,7 @@ def get_google_search(request_data: GoogleSearchData):
     Endpoint to perform Google searches and retrieving search results.
     """
      # Perform the Google search
-    search_results = search(request_data.query, num_results=request_data.num_results, lang="en", advanced=True)
+    search_results = search(request_data.query, num_results=request_data.num_results, lang=request_data.lang, advanced=True)
     return {
         "search_results" : search_results
     }
