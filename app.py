@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from typing import List
 import re
-
+from googlesearch import search
 app = FastAPI()
 
 @app.get("/")
@@ -53,5 +53,19 @@ def analyze_speaking_time(request_data: SpeakingData):
     Endpoint use to calculate the speaking time in second using the speaking rate in WPM and the total word numbers of the text.
     """
     return calculate_speaking_time(request_data.speaking_rate, request_data.text_length)
+
+class GoogleSearchData(BaseModel):
+    query: str
+    num_results: int
+
+@app.post("/get_google_search")
+def get_google_search(request_data: GoogleSearchData):
+    """
+    Endpoint to perform Google searches and retrieving search results.
+    """
+     # Perform the Google search
+    search_results = search(request_data.query, num_results=request_data.num_results, lang="en")
+    return list(search_results)
+
 
 
