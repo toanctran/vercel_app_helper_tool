@@ -3,6 +3,9 @@ from pydantic import BaseModel
 from typing import List
 import re
 from googlesearch import search
+import requests
+from bs4 import BeautifulSoup
+
 app = FastAPI()
 
 @app.get("/")
@@ -69,6 +72,24 @@ def get_google_search(request_data: GoogleSearchData):
     return {
         "search_results" : search_results
     }
+
+
+class ScrapeRequestData(BaseModel):
+    url: str
+
+@app.post("/scrape_site")
+def get_website_content(request_data: ScrapeRequestData):
+    """
+    Endpoint to get the website content.
+    """
+    response = requests.get(request_data.url)
+    if response.status_code == 200:
+        soup = BeautifulSoup(response.text, 'html.parser')
+        text_content = soup.get_text()
+        content = str(text_content)
+        return {"content":content}
+    else:
+        return {"error":  str(f"Failed to fetch the URL {request_data.url}")}
 
 
 
