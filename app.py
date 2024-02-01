@@ -5,10 +5,6 @@ import re
 from googlesearch import search
 import requests
 from bs4 import BeautifulSoup
-from langchain.chains.summarize import load_summarize_chain
-from langchain.chat_models import ChatOpenAI
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain.prompts import PromptTemplate
 from pydantic import Field
 import os
 
@@ -97,44 +93,6 @@ def get_website_content(request_data: ScrapeRequestData):
     else:
         return {"error":  str(f"Failed to fetch the URL {request_data.url}")}
     
-# class SummaryRequestData(BaseModel):
-#     content: str = Field(
-#       ..., description="Content to summarize"
-#   )
-    
-# @app.post("/summarize_content")
-# def get_summary(request_data: SummaryRequestData):
-#     """
-#     Endpoint to summarize give content
-#     """
-#     try:
-#         llm = ChatOpenAI(temperature=0, model="gpt-3.5-turbo-1106", openai_api_key = os.environ["OPENAI_API_KEY"])
-#         text_splitter = RecursiveCharacterTextSplitter(
-#             separators=["\n\n", "\n"], chunk_size=10000, chunk_overlap=500)
-#         docs = text_splitter.create_documents([request_data.content])
-#         map_prompt = """
-#         Write a detailed summary of the following text for a research purpose:
-#         "{text}"
-#         SUMMARY:
-#         """
-#         map_prompt_template = PromptTemplate(
-#             template=map_prompt, input_variables=["text"])
-
-#         summary_chain = load_summarize_chain(
-#             llm=llm,
-#             chain_type='map_reduce',
-#             map_prompt=map_prompt_template,
-#             combine_prompt=map_prompt_template,
-#             verbose=True
-#         )
-
-#         output = summary_chain.run(input_documents=docs,)
-
-#         return {"summary_text":output}
-#     except Exception as e:
-#         return {"error": str(e)}
-
-
 
 class GoogleSearchData(BaseModel):
     query: str
